@@ -3,11 +3,6 @@ import tensorflow
 import numpy as np
 import os
 
-dist34 = os.path.join(os.getcwd(), 'leader', 'dist12.npy')
-speed34 = os.path.join(os.getcwd(), 'leader', 'speed12.npy')
-acc34 = os.path.join(os.getcwd(), 'leader', 'acc12.npy')
-
-
 class Game:
     def __init__(self, vehicle, vehicle_list, score=0, state='0'):
         """
@@ -36,10 +31,6 @@ class Game:
         self.substate = None  # substate within certain states
         self.r_a = 0  # value for decision-making
         x = self.get_platoon_middle()  # precompute platoon middle location
-
-        self.dist34 = np.array([])
-        self.speed34 = np.array([])
-        self.acc34 = np.array([])
 
     def update_score(self):
         """Increment the score by 1"""
@@ -129,13 +120,6 @@ class Game:
         v_middle = self.cal_distance(self.vehicle, platoon)
         v_leader = self.cal_distance(self.vehicle, self.vehicle_list[0])
         v_follower = self.cal_distance(self.vehicle, self.vehicle_list[len(self.vehicle_list) - 1])
-
-        # todo: leader
-        self.cross_vehicle = self.vehicle_list[0]
-        location = self.cross_vehicle.get_location()
-        location.x += self.d_n / 1.5
-        state = 'leader'
-        return location
 
         if v_leader < v_middle:
             fir_x = self.vehicle_list[0].get_location().x
@@ -281,13 +265,6 @@ class Game:
             self.handle_state_3(control, waypoint)
         elif self.state == '4':
             self.handle_state_4(control)
-        
-        #self.dist34 = np.append(self.dist34, self.cal_distance(self.vehicle_list[len(self.vehicle_list)-2], self.vehicle_list[len(self.vehicle_list)-1]))
-        #self.speed34 = np.append(self.speed34, self.cal_speed(self.vehicle_list[len(self.vehicle_list)-2])-self.cal_speed(self.vehicle_list[len(self.vehicle_list)-1]))
-        #self.acc34 = np.append(self.acc34, self.cal_speed(self.vehicle_list[len(self.vehicle_list)-2])-self.cal_speed(self.vehicle_list[len(self.vehicle_list)-1]))
-        #np.save(dist34, self.dist34)
-        #np.save(speed34, self.speed34)
-        #np.save(acc34, self.acc34)
 
         return control, waypoint
 
