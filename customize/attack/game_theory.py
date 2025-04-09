@@ -470,7 +470,7 @@ class Game:
         if delta_d < d_delta:
             control.brake = min(control.brake + 0.03, 1)
             control.throttle = max(control.throttle - 0.03, 0)
-        else:#补充上，不好跟随的两个判断标准，一个是距离一个是速度，距离x速度的综合太小的话
+        else:
             control.throttle = min(control.throttle + 0.03, 1)
             control.brake = 0
         if delta_d > 6.5:
