@@ -19,9 +19,6 @@ import carla
 
 import numpy as np
 import os
-dist12 = os.path.join(os.getcwd(), 'leader', 'dist12.txt')
-speed12 = os.path.join(os.getcwd(), 'leader', 'speed12.txt')
-acc12 = os.path.join(os.getcwd(), 'leader', 'acc12.txt')
 
 class Controller:
     """
@@ -203,37 +200,6 @@ class Controller:
             platoon_list.append(vm.vehicle)
 
         return platoon_list
-    
-    def cal_distance(self, vehicle1, vehicle2):
-        """
-        Calculate the Euclidean distance between two vehicles
-
-        Args:
-            vehicle1: First vehicle instance
-            vehicle2: Second vehicle instance
-
-        Returns:
-            The distance between the two vehicles
-        """
-        dx = vehicle1.get_location().x - vehicle2.get_location().x
-        dy = vehicle1.get_location().y - vehicle2.get_location().y
-        dz = vehicle1.get_location().z - vehicle2.get_location().z
-
-        return math.sqrt(dx**2 + dy**2 + dz**2)
-    
-    def cal_speed(self, vehicle):
-        v_x = vehicle.get_velocity().x
-        v_y = vehicle.get_velocity().y
-        v_z = vehicle.get_velocity().z
-        speed = math.sqrt(v_x**2 + v_y**2 + v_z**2)
-        return speed
-    
-    def cal_acc(self, vehicle):
-        v_x = vehicle.get_acceleration().x
-        v_y = vehicle.get_acceleration().y
-        v_z = vehicle.get_acceleration().z
-        speed = math.sqrt(v_x**2 + v_y**2 + v_z**2)
-        return speed
 
     def run_step(self, target_speed, waypoint):
         """
@@ -257,10 +223,6 @@ class Controller:
         # control class for carla vehicle
         control = carla.VehicleControl()
 
-        '''
-        new control parameters
-        '''
-
         # emergency stop
         if target_speed == 0 or waypoint is None:
             control.steer = 0.0
@@ -269,9 +231,6 @@ class Controller:
             control.hand_brake = False
             return control
 
-        '''
-        normal behaviour
-        '''
         acceleration = self.lon_run_step(target_speed)
 
         if acceleration > 0.0:
@@ -301,12 +260,5 @@ class Controller:
         control.steer = steering
         control.manual_gear_shift = False
         self.past_steering = steering
-
-        self.dist34 = np.append(self.dist34, self.cal_distance(platoon_list[0], platoon_list[1]))
-        self.speed34 = np.append(self.speed34, self.cal_speed(platoon_list[0])-self.cal_speed(platoon_list[1]))
-        self.acc34 = np.append(self.acc34, self.cal_speed(platoon_list[0])-self.cal_speed(platoon_list[1]))
-        np.savetxt(dist12, self.dist34)
-        np.savetxt(speed12, self.speed34)
-        np.savetxt(acc12, self.acc34)
 
         return control
