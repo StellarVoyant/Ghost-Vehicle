@@ -6,7 +6,7 @@ ________________________________________________________________________________
 ## customize
 This folder contains the necessary attack codes, the subfolders could be replaced directly in OpenCDA.
 
-The initial setting is the Leader Attack with the platoon position starts from $x = -350$.
+The initial setting is the Leader Attack with the platoon position starts from ```x = -350```.
 
 Please change the position in /opencda/scenario_testing/config_yaml/platoon_joining_2lanefree_cosim.yaml in OpenCDA folder to change the attack method.
 
