@@ -10,6 +10,8 @@ The initial setting is the Leader Attack with the platoon position starts from `
 
 Please change the position in /opencda/scenario_testing/config_yaml/platoon_joining_2lanefree_cosim.yaml in OpenCDA folder to change the attack method.
 
+In our own testing, it will turn to Follower Attack when the platoon starts from ```x = -325```.
+
 If want to appoint the attack method, please see code in /customize/attack/game_theory_attack.py.
 
 ## core & scenario_testing
