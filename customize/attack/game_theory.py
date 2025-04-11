@@ -1,7 +1,5 @@
 import math
 import tensorflow
-import numpy as np
-import os
 
 class Game:
     def __init__(self, vehicle, vehicle_list, score=0, state='0'):
@@ -169,9 +167,8 @@ class Game:
         d = math.sqrt(dx ** 2 + dy ** 2 + dz ** 2)
 
         comp_x = self.vehicle_list[0].get_location().x - self.vehicle_list[1].get_location().x
-        comp_y = self.vehicle_list[0].get_location().y - self.vehicle_list[1].get_location().y
 
-        forward = comp_x * dx > 0 or comp_y * dy > 0
+        forward = comp_x * dx > 0
 
         return d, forward
 
@@ -207,7 +204,7 @@ class Game:
         return speed
     
     def cal_ra(self, p_s, d_t, v_p):
-        self.r_a = 0.6 * p_s + d_t + 0.9 * v_p
+        self.r_a = 0.6 * p_s + 0.9 * d_t + 0.9 * v_p
         return self.r_a
 
     def punish_cost(self):
@@ -280,10 +277,11 @@ class Game:
             elif d < 5 and forward:
                 control.brake = 0
             elif d > 5 and not forward:
-                control.brake = min(1.0, 0.01 * d)
+                control.brake = 0
+                control.throttle = min(self.control.throttle+0.02*(d-5), 1)
             else:
                 control.brake = 0
-                control.throttle = min(control.throttle + 0.02, 1)
+                control.throttle = min(self.control.throttle + 0.02, 1)
             self.score = 0
         else:
             control.throttle = self.control.throttle
@@ -396,7 +394,7 @@ class Game:
         fir_v = self.vehicle_list[0]
         delta_d = self.cal_distance(self.vehicle, fir_v)
 
-        if self.cal_ra(delta_d, 1e-6, 1e-6) > (self.d_n): #车队撞了/距离车队还不够近到可以影响车队
+        if self.cal_ra(delta_d, 1e-6, 1e-6) > (self.d_n):
             if control.throttle == 1:
                 control.throttle = 0.5
             if control.brake == 0:
@@ -444,7 +442,7 @@ class Game:
         if control.brake == 1:
             control.brake = self.control.brake
         
-        if delta_d < d_delta:
+        if self.cal_ra(1e-6, delta_d/self.v_v, 1e-6) < self.d_n/self.v_n or delta_d < d_delta:
             control.brake = min(control.brake + 0.03, 1)
             control.throttle = max(control.throttle - 0.03, 0)
         else:
